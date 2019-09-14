@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package pingpong.v1;
+
+option go_package = "pingv1";
+option csharp_namespace = "Ping.V1";
+option php_namespace = "Ping\\V1";
+option java_multiple_files = true;
+option java_package = "com.ping.v1";
+option java_outer_classname = "PingServer";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// PingAPI is an example gRPC service demonstrating the various request 
+// response types using protocol buffers. The http annotations enable the grpc
+// gateway to generate a reverse proxy providing a traditional restful api
+// to the underlying gRPC service.
+service PingAPI {
+  
+  // Ping is a simple request which returns a simple response
+  rpc Ping() returns (PingResponse) {
+    option (google.api.http) = {
+      get: "/v1/ping"
+    };
+  }
+
+  // PingStream accepts a stream of requests, and will return a response
+  // containing a count of the requests processed and the time it took to
+  // process.
+  rpc PingStream(stream PingStreamRequest) returns (PingStreamResponse) {
+    option (google.api.http) = {
+      post: "/v1/ping/stream",
+      body: "*"
+    };
+  }
+
+  // PongStream accepts a request stating how many requests to stream back.
+  // It will response with a stream until the count is reached and close the 
+  // connection.
+  rpc PongStream(PongStreamRequest) returns (stream PongStreamResponse) {
+    option (google.api.http) = {
+      post: "/v1/pong/stream",
+      body: "*"
+    };
+  }
+
+  // PingPongStream demonstrates a bidirectional stream where requests are 
+  // streamed both from the client and the server.
+  rpc PingPongStream(stream PingPongRequest) returns (stream PingPongResponse) {
+    option (google.api.http) = {
+      post: "/v1/pingpong/stream",
+      body: "*"
+    };
+  }
+}
+
+// PingResponse contains a message sent from the server
+message PingResponse {
+  string message = 1;
+}
+
+// PingStreamRequest contains details of the streaming request sent from the 
+// client
+message PingStreamRequest {
+  int id = 1;
+  string message = 2;
+}
+
+// PingStreamResponse contains information about the processing time of the 
+// ping stream.
+message PingStreamResponse {
+  int count = 1;
+  google.protobuf.Timestamp duration = 2;
+}
+
+// PongStreamRequest contains a count telling the server how many responses
+// to stream, and a message to stream back
+message PongStreamRequest {
+  int count = 1;
+  string message = 2;
+}
+
+// PongStreamResponse contains details of the streaming response.
+message PongStreamResponse {
+  int id = 1;
+  string message = 2;
+}
+
+// PingPongRequest contains details of a streaming request sent from the 
+// client.
+message PingPongRequest {
+  int id = 1;
+  string message = 2;
+}
+
+// PingPongResponse contains details of a streaming response sent from the 
+// server.
+message PingPongResponse {
+  int id = 1;
+  string message = 2;
+}
