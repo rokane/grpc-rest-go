@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"io"
+	"log"
 
 	pv1 "github.com/rokane/grpc-rest-template-go/pkg/pingv1"
 )
@@ -20,7 +21,10 @@ func NewPingServer() *PingServer {
 
 // Ping receives an empty request from a client, and response with a Pong msg.
 func (ps *PingServer) Ping(ctx context.Context, req *pv1.PingRequest) (*pv1.PingResponse, error) {
-	return &pv1.PingResponse{Message: "Pong"}, nil
+	log.Println("Received Ping Request:")
+	resp := pv1.PingResponse{Message: "Pong"}
+	log.Println("Sending Ping Response:", resp.GetMessage())
+	return &resp, nil
 }
 
 // PingStream processes a stream of PingRequests and responds with the count
@@ -29,10 +33,11 @@ func (ps *PingServer) PingStream(stream pv1.PingAPI_PingStreamServer) error {
 	count := 0
 	for {
 		// Receive request details from stream
-		_, err := stream.Recv()
+		req, err := stream.Recv()
 
 		// If end of stream, return result
 		if err == io.EOF {
+			log.Println("Sending PingStream Response:", count)
 			return stream.SendAndClose(&pv1.PingStreamResponse{
 				Count: int32(count),
 			})
@@ -44,6 +49,7 @@ func (ps *PingServer) PingStream(stream pv1.PingAPI_PingStreamServer) error {
 		}
 
 		// Process request
+		log.Println("Received PingStream Request:", req.GetMessage(), req.GetId())
 		count++
 	}
 }
@@ -51,20 +57,18 @@ func (ps *PingServer) PingStream(stream pv1.PingAPI_PingStreamServer) error {
 // PongStream receives a request stating information on how long to stream
 // a response for, and proceeds to send a streaming response.
 func (ps *PingServer) PongStream(req *pv1.PongStreamRequest, stream pv1.PingAPI_PongStreamServer) error {
-
-	for i := 0; i < int(req.Count); i++ {
-
+	log.Println("Received PongStream Request:", req.GetCount())
+	for i := 1; i <= int(req.Count); i++ {
 		resp := pv1.PongStreamResponse{
 			Id:      int32(i),
 			Message: "Pong ...",
 		}
-
 		// Send response on stream
+		log.Println("Sending PongStream Response:", resp.GetMessage(), resp.GetId())
 		if err := stream.Send(&resp); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -73,7 +77,7 @@ func (ps *PingServer) PingPongStream(stream pv1.PingAPI_PingPongStreamServer) er
 	count := 0
 	for {
 		// Receive request from stream
-		_, err := stream.Recv()
+		req, err := stream.Recv()
 
 		// If end of stream, terminate
 		if err == io.EOF {
@@ -86,11 +90,17 @@ func (ps *PingServer) PingPongStream(stream pv1.PingAPI_PingPongStreamServer) er
 		}
 
 		// Process response
+		log.Println("Received PingPongStream Request:",
+			req.GetMessage(), req.GetId())
+
 		count++
 		resp := pv1.PingPongResponse{
 			Id:      int32(count),
 			Message: "Pong ...",
 		}
+
+		log.Println("Sending PingPongStream Response:",
+			resp.GetMessage(), resp.GetId())
 
 		// Send response on stream
 		if err := stream.Send(&resp); err != nil {
