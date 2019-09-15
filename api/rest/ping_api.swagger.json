@@ -1,0 +1,272 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ping_api.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/ping": {
+      "get": {
+        "summary": "Ping is a simple request which returns a simple response",
+        "operationId": "Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1PingResponse"
+            }
+          }
+        },
+        "tags": [
+          "PingAPI"
+        ]
+      }
+    },
+    "/v1/ping/stream": {
+      "post": {
+        "summary": "PingStream accepts a stream of requests, and will return a response\ncontaining a count of the requests processed and the time it took to\nprocess.",
+        "operationId": "PingStream",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1PingStreamResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " (streaming inputs)",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1PingStreamRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PingAPI"
+        ]
+      }
+    },
+    "/v1/pingpong/stream": {
+      "post": {
+        "summary": "PingPongStream demonstrates a bidirectional stream where requests are \nstreamed both from the client and the server.",
+        "operationId": "PingPongStream",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "$ref": "#/x-stream-definitions/v1PingPongResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": " (streaming inputs)",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1PingPongRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PingAPI"
+        ]
+      }
+    },
+    "/v1/pong/stream": {
+      "post": {
+        "summary": "PongStream accepts a request stating how many requests to stream back.\nIt will response with a stream until the count is reached and close the \nconnection.",
+        "operationId": "PongStream",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "$ref": "#/x-stream-definitions/v1PongStreamResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1PongStreamRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PingAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeStreamError": {
+      "type": "object",
+      "properties": {
+        "grpc_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "http_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "http_status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1PingPongRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "description": "PingPongRequest contains details of a streaming request sent from the \nclient."
+    },
+    "v1PingPongResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "description": "PingPongResponse contains details of a streaming response sent from the \nserver."
+    },
+    "v1PingResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "PingResponse contains a message sent from the server"
+    },
+    "v1PingStreamRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "PingStreamRequest contains details of the streaming request sent from the \nclient"
+    },
+    "v1PingStreamResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "duration": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "PingStreamResponse contains information about the processing time of the \nping stream."
+    },
+    "v1PongStreamRequest": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "PongStreamRequest contains a count telling the server how many responses\nto stream, and a message to stream back"
+    },
+    "v1PongStreamResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "description": "PongStreamResponse contains details of the streaming response."
+    }
+  },
+  "x-stream-definitions": {
+    "v1PingPongResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/v1PingPongResponse"
+        },
+        "error": {
+          "$ref": "#/definitions/runtimeStreamError"
+        }
+      },
+      "title": "Stream result of v1PingPongResponse"
+    },
+    "v1PongStreamResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/v1PongStreamResponse"
+        },
+        "error": {
+          "$ref": "#/definitions/runtimeStreamError"
+        }
+      },
+      "title": "Stream result of v1PongStreamResponse"
+    }
+  }
+}

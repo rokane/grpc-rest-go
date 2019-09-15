@@ -17,9 +17,9 @@ import "google/protobuf/timestamp.proto";
 // gateway to generate a reverse proxy providing a traditional restful api
 // to the underlying gRPC service.
 service PingAPI {
-  
+
   // Ping is a simple request which returns a simple response
-  rpc Ping() returns (PingResponse) {
+  rpc Ping(PingRequest) returns (PingResponse) {
     option (google.api.http) = {
       get: "/v1/ping"
     };
@@ -55,6 +55,9 @@ service PingAPI {
   }
 }
 
+// PingRequest contains no information
+message PingRequest {}
+
 // PingResponse contains a message sent from the server
 message PingResponse {
   string message = 1;
@@ -63,40 +66,40 @@ message PingResponse {
 // PingStreamRequest contains details of the streaming request sent from the 
 // client
 message PingStreamRequest {
-  int id = 1;
+  int32 id = 1;
   string message = 2;
 }
 
 // PingStreamResponse contains information about the processing time of the 
 // ping stream.
 message PingStreamResponse {
-  int count = 1;
+  int32 count = 1;
   google.protobuf.Timestamp duration = 2;
 }
 
 // PongStreamRequest contains a count telling the server how many responses
 // to stream, and a message to stream back
 message PongStreamRequest {
-  int count = 1;
+  int32 count = 1;
   string message = 2;
 }
 
 // PongStreamResponse contains details of the streaming response.
 message PongStreamResponse {
-  int id = 1;
+  int32 id = 1;
   string message = 2;
 }
 
 // PingPongRequest contains details of a streaming request sent from the 
 // client.
 message PingPongRequest {
-  int id = 1;
+  int32 id = 1;
   string message = 2;
 }
 
 // PingPongResponse contains details of a streaming response sent from the 
 // server.
 message PingPongResponse {
-  int id = 1;
+  int32 id = 1;
   string message = 2;
 }
