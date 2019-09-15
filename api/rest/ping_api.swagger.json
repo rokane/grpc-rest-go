@@ -34,7 +34,7 @@
     },
     "/v1/ping/stream": {
       "post": {
-        "summary": "PingStream accepts a stream of requests, and will return a response\ncontaining a count of the requests processed and the time it took to\nprocess.",
+        "summary": "PingStream accepts a stream of requests, and will return a response\ncontaining a count of the requests processed.",
         "operationId": "PingStream",
         "responses": {
           "200": {
@@ -208,13 +208,9 @@
         "count": {
           "type": "integer",
           "format": "int32"
-        },
-        "duration": {
-          "type": "string",
-          "format": "date-time"
         }
       },
-      "description": "PingStreamResponse contains information about the processing time of the \nping stream."
+      "description": "PingStreamResponse contains information about the request processed."
     },
     "v1PongStreamRequest": {
       "type": "object",

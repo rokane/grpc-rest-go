@@ -10,7 +10,6 @@ option java_package = "com.ping.v1";
 option java_outer_classname = "PingServer";
 
 import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
 
 // PingAPI is an example gRPC service demonstrating the various request 
 // response types using protocol buffers. The http annotations enable the grpc
@@ -26,8 +25,7 @@ service PingAPI {
   }
 
   // PingStream accepts a stream of requests, and will return a response
-  // containing a count of the requests processed and the time it took to
-  // process.
+  // containing a count of the requests processed.
   rpc PingStream(stream PingStreamRequest) returns (PingStreamResponse) {
     option (google.api.http) = {
       post: "/v1/ping/stream",
@@ -70,11 +68,9 @@ message PingStreamRequest {
   string message = 2;
 }
 
-// PingStreamResponse contains information about the processing time of the 
-// ping stream.
+// PingStreamResponse contains information about the request processed.
 message PingStreamResponse {
   int32 count = 1;
-  google.protobuf.Timestamp duration = 2;
 }
 
 // PongStreamRequest contains a count telling the server how many responses
