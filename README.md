@@ -1,4 +1,4 @@
-# grpc-rest-template-go
+# grpc-rest-go
 
 This repository shows an example gRPC service contains set of methods to demonstrate  basic RPC as well as server, client and bidirection streaming RPC's.
 
